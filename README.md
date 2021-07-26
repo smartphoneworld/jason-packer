@@ -5,6 +5,8 @@ g++ -o testfile-creator barbara_json_parser-testfile-creator.o -O2 -g -Wall -fme
 
 
 Building main tool:
+git clone  https://github.com/smartphoneworld/jason-packer.git
+cd jason-packer
 make
 
 Run:
