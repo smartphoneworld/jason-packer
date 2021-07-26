@@ -73,7 +73,7 @@ int main(int argc, char** argv)
 			  unique_keys.push_back(it.key());
 			  cout << "adding new key: " << it.key() << std::endl;
 		  }
-		  jnew[new_key] = it.value();
+		  jnew[to_string(new_key)] = it.value();
 
 		  // writing key in TLV
 		  char typ = 1;// integer
@@ -86,6 +86,7 @@ int main(int argc, char** argv)
 		  // writing value in TLV
 		  if ( it.value().is_null() || !it.value().is_primitive() )
 			  continue;
+
 		  if (it.value().is_boolean())
 		  {
 			  typ = 2;// boolean
@@ -146,9 +147,8 @@ int main(int argc, char** argv)
 		  }
 		}
 
-		rawfile << jnew << std::endl;
-
-	// end of record work
+                rawfile << jnew << std::endl;
+		// end of record work
 	}
 	recordsfile.close();
 	tlvfile.close();
@@ -156,7 +156,7 @@ int main(int argc, char** argv)
 	// writing dictionary
 	ofstream dictfile( filename + ".dict.txt");
 	std::fstream tlvdict;
-	tlvdict.open(filename + ".processed.tvl", std::ios::out | std::ios::binary);
+	tlvdict.open(filename + ".dict.tvl", std::ios::out | std::ios::binary);
 
 	for (int i=0; i<(int)unique_keys.size(); i++)
 	{

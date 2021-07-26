@@ -33,7 +33,7 @@ int main(int argc, char** argv) {
 		string record = "{\"happy\": true, \"pi\": 3.14, \"Likes\":false, \"key"+to_string(rnd)+"\":\"Key test value\"}";
 		testfile << record << endl;
 		if(t % 1000 == 0)
-			cout << ".";
+			cout << "." << flush;
 	}
 	testfile.close();
 	cout << endl << "test file created: " << filename << endl;
