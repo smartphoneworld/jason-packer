@@ -18,27 +18,17 @@ using namespace std;
 // for convenience
 using json = nlohmann::json;
 
-int main(void) {
-
+int main(int argc, char** argv)
+{
 	string filename = "test_data.json";
-	// creating a test file
-	if(false)
+
+	if(argc>2)
 	{
-		cout << "Creating a big test file: " << filename << endl;
-		std::ofstream testfile(filename);
-		for(int t=0; t<100000; t++)
-		{
-			int rnd = rand() % 100; // 100 unqiue keys
-			string record = "{\"happy\": true, \"pi\": 3.14, \"Likes\":false, \"key"+to_string(rnd)+"\":\"Key test value\"}";
-			testfile << record << endl;
-			if(t % 1000 == 0)
-				cout << ".";
-		}
-		testfile.close();
-		cout << endl << "test file created: " << filename << endl;
-		exit(0);
+		filename = argv[1];
 	}
+
 	vector<string> unique_keys;
+
 	// open the large json file
 	cout << "opening json file: " << filename << endl;
 	std::ifstream recordsfile(filename);
@@ -57,13 +47,11 @@ int main(void) {
 		// json parse each line
 		//auto j3 = json::parse(R"({"happy": true, "pi": 3.14, "Likes":true})");
 		auto j3 = json::parse(line);
-
-		std::cout << "Processing: " << j3 << std::endl;
+		std::cout << "Parsed: " << j3 << std::endl;
 		json jnew;
 
 		// write number of items in json record.. then serially add keys as int32 and values as strings or boolean, double, or integers.
 		char number_of_params = j3.size();
-		//std::ofstream rawfile(filename + ".processed.raw");
 		tlvfile<<number_of_params;
 
 		// find unique keys and replace
@@ -71,9 +59,8 @@ int main(void) {
 		{
 		  std::cout << "Processing: " << it.key() << " : " << it.value() << "\n"; // debugging
 		  int new_key=-1;
-		  for (int i=0; i<unique_keys.size(); i++)
+		  for (int i=0; i<(int)unique_keys.size(); i++)
 		  {
-				  //std::cout << " " << unique_keys[i];
 				  if(unique_keys[i]==it.key())
 				  {
 					  new_key=i+1;
@@ -86,7 +73,6 @@ int main(void) {
 			  unique_keys.push_back(it.key());
 			  cout << "adding new key: " << it.key() << std::endl;
 		  }
-		  //jnew.push_back(jnew, it.value());
 		  jnew[new_key] = it.value();
 
 		  // writing key in TLV
@@ -172,20 +158,21 @@ int main(void) {
 	std::fstream tlvdict;
 	tlvdict.open(filename + ".processed.tvl", std::ios::out | std::ios::binary);
 
-	for (int i=0; i<unique_keys.size(); i++)
+	for (int i=0; i<(int)unique_keys.size(); i++)
 	{
 		if(i>0)
 			dictfile << ", ";
 		dictfile << unique_keys[i] << ":" << (i+1);// << std::endl;
 
 		// writing dictionary record in TLV (string:index)
+		// adding the key string
 		char typ = 4;// string
 		string value=unique_keys[i];
 		char length = sizeof(char)*value.length();
 	    tlvdict << typ << length;
 	    tlvdict.write( reinterpret_cast<const char *>(value.c_str()), length);
 
-
+	    // adding the key index to the TLV dictionary
 	    typ = 1;// integer
 	    int nValue=i+1;
 	    length = sizeof(int);

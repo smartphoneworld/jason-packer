@@ -15,13 +15,19 @@
 
 using namespace std;
 
-int main(void) {
+int main(int argc, char** argv) {
+        string filename = "test_data.json";
+	int records = 100;
+	if(argc>2)
+	{
+		filename = argv[1];
+		records = atoi(argv[2]);
+	}
 
-	string filename = "test_data.json";
 	// creating a test file
-	cout << "Creating a big test file: " << filename << endl;
+	cout << "Creating a big test file: " << filename << ", Records: " << records << endl;
 	std::ofstream testfile(filename);
-	for(int t=0; t<100000; t++)
+	for(int t=0; t<records; t++)
 	{
 		int rnd = rand() % 100; // 100 unqiue keys
 		string record = "{\"happy\": true, \"pi\": 3.14, \"Likes\":false, \"key"+to_string(rnd)+"\":\"Key test value\"}";
