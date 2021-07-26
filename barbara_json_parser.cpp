@@ -22,7 +22,7 @@ int main(int argc, char** argv)
 {
 	string filename = "test_data.json";
 
-	if(argc>2)
+	if(argc>1)
 	{
 		filename = argv[1];
 	}
